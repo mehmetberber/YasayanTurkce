@@ -1,0 +1,14 @@
+{
+  "name": "yasayan-turkce",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Yaşayan Türkçe Sözlük",
+  "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "tdk:probe": "pnpm --filter @yasayan-turkce/tdk-probe probe",
+    "typecheck": "pnpm -r typecheck"
+  }
+}
