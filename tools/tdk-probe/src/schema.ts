@@ -58,9 +58,58 @@ export const TdkEntrySchema = z.object({
 
 export const TdkEntryListSchema = z.array(TdkEntrySchema);
 
+export const TdkSearchResultItemSchema = z.object({
+  madde_id: z.number(),
+  madde: z.string(),
+  kac: z.number().default(0),
+  taki: z.string().nullish(),
+  lisan_kodu: z.number().nullish(),
+  lisan_adi: z.string().nullish(),
+  wordTypes: z
+    .array(z.string())
+    .nullish()
+    .transform((value) => value ?? []),
+  alanlar: z
+    .array(
+      z.object({
+        ozellik_id: z.number().nullish(),
+        ad: z.string().nullish(),
+      }),
+    )
+    .nullish()
+    .transform((value) => value ?? []),
+  preview: z.string().nullish(),
+});
+
+export const TdkSearchQuerySchema = z.object({
+  q: z.string(),
+  mode: z.string(),
+  scope: z.string(),
+  sort: z.string(),
+  limit: z.number(),
+  offset: z.number(),
+  wordTypeIds: z.array(z.number()).default([]),
+  kullanimIds: z.array(z.number()).default([]),
+  alanIds: z.array(z.number()).default([]),
+  lisanKodlari: z.array(z.number()).default([]),
+});
+
+export const TdkSearchResponseSchema = z.object({
+  sorgu: TdkSearchQuerySchema,
+  toplam: z.number(),
+  sayfa: z.object({
+    limit: z.number(),
+    offset: z.number(),
+    sonrakiOffset: z.number().nullish(),
+  }),
+  sonuclar: z.array(TdkSearchResultItemSchema).default([]),
+});
+
 export type TdkAuthor = z.infer<typeof TdkAuthorSchema>;
 export type TdkExample = z.infer<typeof TdkExampleSchema>;
 export type TdkProperty = z.infer<typeof TdkPropertySchema>;
 export type TdkSense = z.infer<typeof TdkSenseSchema>;
 export type TdkReference = z.infer<typeof TdkReferenceSchema>;
 export type TdkEntry = z.infer<typeof TdkEntrySchema>;
+export type TdkSearchResultItem = z.infer<typeof TdkSearchResultItemSchema>;
+export type TdkSearchResponse = z.infer<typeof TdkSearchResponseSchema>;

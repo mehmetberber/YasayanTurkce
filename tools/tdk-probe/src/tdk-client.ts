@@ -1,8 +1,27 @@
-import { TdkEntryListSchema, type TdkEntry } from "./schema.js";
+import {
+  TdkEntryListSchema,
+  TdkSearchResponseSchema,
+  type TdkEntry,
+  type TdkSearchResponse,
+} from "./schema.js";
 
 const TDK_API_BASE = "https://api.sozluk.gov.tr";
 const TDK_WEB_ORIGIN = "https://sozluk.gov.tr";
 const REQUEST_TIMEOUT_MS = 30_000;
+
+export const TDK_SEARCH_MODES = [
+  "start",
+  "end",
+  "middle",
+  "exact",
+  "wildcard",
+  "regex",
+] as const;
+
+export const TDK_SEARCH_SCOPES = ["madde", "anlam", "ornek", "all"] as const;
+
+export type TdkSearchMode = (typeof TDK_SEARCH_MODES)[number];
+export type TdkSearchScope = (typeof TDK_SEARCH_SCOPES)[number];
 
 // TDK'nın kendi web istemcisi gibi görünmeden API 403 dönüyor.
 // Bu, API'nin resmî ve stabil olmadığının bir başka göstergesi.
@@ -15,6 +34,31 @@ export interface TdkLookupResult {
   requestUrl: string;
   fetchedAt: string;
   entries: TdkEntry[];
+  raw: unknown;
+}
+
+export interface TdkSearchOptions {
+  mode?: TdkSearchMode;
+  scope?: TdkSearchScope;
+  sort?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export interface ResolvedTdkSearchOptions {
+  mode: TdkSearchMode;
+  scope: TdkSearchScope;
+  sort: string;
+  limit: number;
+  offset: number;
+}
+
+export interface TdkSearchResult {
+  query: string;
+  options: ResolvedTdkSearchOptions;
+  requestUrl: string;
+  fetchedAt: string;
+  response: TdkSearchResponse;
   raw: unknown;
 }
 
@@ -39,6 +83,72 @@ export class TdkClient {
     url.searchParams.set("ara", query);
     url.searchParams.set("searchType", "web");
 
+    const raw = await this.requestJson(url);
+    const entries = TdkEntryListSchema.parse(raw);
+
+    return {
+      query,
+      requestUrl: url.toString(),
+      fetchedAt: new Date().toISOString(),
+      entries,
+      raw,
+    };
+  }
+
+  async search(query: string, options: TdkSearchOptions = {}): Promise<TdkSearchResult> {
+    const normalizedQuery = query.trim();
+    if (!normalizedQuery) {
+      throw new Error("Aranacak kelime boş olamaz.");
+    }
+
+    const resolved: ResolvedTdkSearchOptions = {
+      mode: options.mode ?? "start",
+      scope: options.scope ?? "madde",
+      sort: options.sort ?? "madde_asc",
+      limit: options.limit ?? 25,
+      offset: options.offset ?? 0,
+    };
+
+    if (!TDK_SEARCH_MODES.includes(resolved.mode)) {
+      throw new Error(
+        `Geçersiz mode: ${resolved.mode}. Geçerli değerler: ${TDK_SEARCH_MODES.join(", ")}`,
+      );
+    }
+    if (!TDK_SEARCH_SCOPES.includes(resolved.scope)) {
+      throw new Error(
+        `Geçersiz scope: ${resolved.scope}. Geçerli değerler: ${TDK_SEARCH_SCOPES.join(", ")}`,
+      );
+    }
+    if (!Number.isInteger(resolved.limit) || resolved.limit < 1 || resolved.limit > 100) {
+      throw new Error("limit 1 ile 100 arasında bir tam sayı olmalı.");
+    }
+    if (!Number.isInteger(resolved.offset) || resolved.offset < 0) {
+      throw new Error("offset 0 veya daha büyük bir tam sayı olmalı.");
+    }
+
+    const url = new URL("/gts-yeni/arama", TDK_API_BASE);
+    url.searchParams.set("q", normalizedQuery);
+    url.searchParams.set("mode", resolved.mode);
+    url.searchParams.set("scope", resolved.scope);
+    url.searchParams.set("sort", resolved.sort);
+    url.searchParams.set("limit", String(resolved.limit));
+    url.searchParams.set("offset", String(resolved.offset));
+    url.searchParams.set("searchType", "web");
+
+    const raw = await this.requestJson(url);
+    const response = TdkSearchResponseSchema.parse(raw);
+
+    return {
+      query: normalizedQuery,
+      options: resolved,
+      requestUrl: url.toString(),
+      fetchedAt: new Date().toISOString(),
+      response,
+      raw,
+    };
+  }
+
+  private async requestJson(url: URL): Promise<unknown> {
     const response = await fetch(url, {
       headers: {
         "User-Agent": USER_AGENT,
@@ -57,15 +167,6 @@ export class TdkClient {
       );
     }
 
-    const raw: unknown = await response.json();
-    const entries = TdkEntryListSchema.parse(raw);
-
-    return {
-      query,
-      requestUrl: url.toString(),
-      fetchedAt: new Date().toISOString(),
-      entries,
-      raw,
-    };
+    return response.json();
   }
 }

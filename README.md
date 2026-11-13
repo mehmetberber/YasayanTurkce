@@ -22,4 +22,12 @@ pnpm tdk:probe kitap
 
 Bu komut TDK'nın web arayüzünün kullandığı JSON uç noktasına istek atar, cevabı Zod ile doğrular ve ham cevabı `tools/tdk-probe/data/raw/tdk/` altına kaydeder.
 
+TDK arama probe'u:
+
+```bash
+pnpm tdk:search "kitap"
+pnpm tdk:search "kitap" --mode middle --scope anlam --limit 5
+pnpm tdk:search "kitap" --mode exact --scope all --limit 10
+```
+
 > Not: TDK verisi geliştirme/prototip aşamasında referans olarak kullanılmaktadır. Üretimde kullanım ve yeniden dağıtım için TDK'nın telif ve kullanım koşulları ayrıca değerlendirilmelidir.

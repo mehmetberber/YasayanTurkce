@@ -9,6 +9,7 @@
   },
   "scripts": {
     "tdk:probe": "pnpm --filter @yasayan-turkce/tdk-probe probe",
+    "tdk:search": "pnpm --filter @yasayan-turkce/tdk-probe search-cli",
     "typecheck": "pnpm -r typecheck"
   }
 }

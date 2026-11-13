@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "probe": "tsx src/index.ts",
+    "search-cli": "tsx src/search.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
