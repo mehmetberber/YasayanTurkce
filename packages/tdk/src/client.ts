@@ -1,4 +1,5 @@
 import {
+  TdkEntryDetailMapSchema,
   TdkEntryListSchema,
   TdkSearchResponseSchema,
   type TdkEntry,
@@ -31,6 +32,14 @@ const USER_AGENT =
 
 export interface TdkLookupResult {
   query: string;
+  requestUrl: string;
+  fetchedAt: string;
+  entries: TdkEntry[];
+  raw: unknown;
+}
+
+export interface TdkEntriesResult {
+  ids: number[];
   requestUrl: string;
   fetchedAt: string;
   entries: TdkEntry[];
@@ -95,6 +104,31 @@ export class TdkClient {
     };
   }
 
+  async getEntriesByIds(ids: readonly number[]): Promise<TdkEntriesResult> {
+    if (ids.length === 0) {
+      throw new Error("En az bir madde id gerekli.");
+    }
+    if (ids.some((id) => !Number.isInteger(id) || id <= 0)) {
+      throw new Error("Madde id'leri pozitif tam sayı olmalı.");
+    }
+
+    const url = new URL("/gts-yeni/maddeler-detay", TDK_API_BASE);
+    const raw = await this.requestJson(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ maddeIds: ids }),
+    });
+    const entryMap = TdkEntryDetailMapSchema.parse(raw);
+
+    return {
+      ids: [...ids],
+      requestUrl: url.toString(),
+      fetchedAt: new Date().toISOString(),
+      entries: Object.values(entryMap),
+      raw,
+    };
+  }
+
   async search(query: string, options: TdkSearchOptions = {}): Promise<TdkSearchResult> {
     const normalizedQuery = query.trim();
     if (!normalizedQuery) {
@@ -148,14 +182,16 @@ export class TdkClient {
     };
   }
 
-  private async requestJson(url: URL): Promise<unknown> {
+  private async requestJson(url: URL, init: RequestInit = {}): Promise<unknown> {
+    const headers = new Headers(init.headers);
+    headers.set("User-Agent", USER_AGENT);
+    headers.set("Accept", "application/json, text/plain, */*");
+    headers.set("Origin", TDK_WEB_ORIGIN);
+    headers.set("Referer", `${TDK_WEB_ORIGIN}/`);
+
     const response = await fetch(url, {
-      headers: {
-        "User-Agent": USER_AGENT,
-        Accept: "application/json, text/plain, */*",
-        Origin: TDK_WEB_ORIGIN,
-        Referer: `${TDK_WEB_ORIGIN}/`,
-      },
+      ...init,
+      headers,
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
 

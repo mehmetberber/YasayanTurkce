@@ -1,8 +1,12 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import { TdkApiError, TdkClient, type TdkLookupResult } from "./tdk-client.js";
-import type { TdkEntry } from "./schema.js";
+import {
+  TdkApiError,
+  TdkClient,
+  type TdkEntry,
+  type TdkLookupResult,
+} from "@yasayan-turkce/tdk";
 import { slugify, truncate } from "./text.js";
 
 function usage(): void {

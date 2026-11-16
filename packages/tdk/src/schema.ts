@@ -16,7 +16,22 @@ export const TdkPropertySchema = z.object({
   ozellik_id: z.number(),
   tam_adi: z.string().nullish(),
   kisa_adi: z.string().nullish(),
-  tur: z.number(),
+  tur: z.number().nullish(),
+});
+
+export const TdkSenseRelationSchema = z.object({
+  anlam_id: z.number().nullish(),
+  sira: z.number().nullish(),
+  deger: z.string().nullish(),
+  hedef_madde_id: z.number().nullish(),
+});
+
+export const TdkSenseReferenceSchema = z.object({
+  id: z.number().nullish(),
+  anlam_id: z.number().nullish(),
+  hedef_madde: z.string().nullish(),
+  hedef_madde_id: z.number().nullish(),
+  gosterim: z.string().nullish(),
 });
 
 export const TdkSenseSchema = z.object({
@@ -25,9 +40,18 @@ export const TdkSenseSchema = z.object({
   orneklerListe: z.array(TdkExampleSchema).default([]),
   ozelliklerListe: z.array(TdkPropertySchema).default([]),
   sozcukTuru: z.string().nullish(),
-  anlamEsAnlam: z.array(z.unknown()).default([]),
-  anlamKarsitAnlam: z.array(z.unknown()).default([]),
-  anlamReferans: z.array(z.unknown()).default([]),
+  anlamEsAnlam: z
+    .array(TdkSenseRelationSchema)
+    .nullish()
+    .transform((value) => value ?? []),
+  anlamKarsitAnlam: z
+    .array(TdkSenseRelationSchema)
+    .nullish()
+    .transform((value) => value ?? []),
+  anlamReferans: z
+    .array(TdkSenseReferenceSchema)
+    .nullish()
+    .transform((value) => value ?? []),
 });
 
 export const TdkReferenceSchema = z.object({
@@ -57,6 +81,7 @@ export const TdkEntrySchema = z.object({
 });
 
 export const TdkEntryListSchema = z.array(TdkEntrySchema);
+export const TdkEntryDetailMapSchema = z.record(z.string(), TdkEntrySchema);
 
 export const TdkSearchResultItemSchema = z.object({
   madde_id: z.number(),
@@ -109,6 +134,8 @@ export type TdkAuthor = z.infer<typeof TdkAuthorSchema>;
 export type TdkExample = z.infer<typeof TdkExampleSchema>;
 export type TdkProperty = z.infer<typeof TdkPropertySchema>;
 export type TdkSense = z.infer<typeof TdkSenseSchema>;
+export type TdkSenseRelation = z.infer<typeof TdkSenseRelationSchema>;
+export type TdkSenseReference = z.infer<typeof TdkSenseReferenceSchema>;
 export type TdkReference = z.infer<typeof TdkReferenceSchema>;
 export type TdkEntry = z.infer<typeof TdkEntrySchema>;
 export type TdkSearchResultItem = z.infer<typeof TdkSearchResultItemSchema>;

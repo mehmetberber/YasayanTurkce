@@ -10,7 +10,7 @@ import {
   type TdkSearchMode,
   type TdkSearchResult,
   type TdkSearchScope,
-} from "./tdk-client.js";
+} from "@yasayan-turkce/tdk";
 import { slugify, truncate } from "./text.js";
 
 function usage(): void {

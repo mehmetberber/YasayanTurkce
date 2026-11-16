@@ -30,4 +30,17 @@ pnpm tdk:search "kitap" --mode middle --scope anlam --limit 5
 pnpm tdk:search "kitap" --mode exact --scope all --limit 10
 ```
 
+Testler:
+
+```bash
+pnpm test
+pnpm typecheck
+```
+
+## Paketler
+
+- `packages/domain` — kaynaktan bağımsız domain modeli ve arama arayüzleri
+- `packages/tdk` — TDK istemcisi, ham şemalar, GTS mapper'ı ve `GtsSource`
+- `tools/tdk-probe` — TDK API'sini incelemek için CLI araçları
+
 > Not: TDK verisi geliştirme/prototip aşamasında referans olarak kullanılmaktadır. Üretimde kullanım ve yeniden dağıtım için TDK'nın telif ve kullanım koşulları ayrıca değerlendirilmelidir.
