@@ -17,3 +17,13 @@ export class SourceNotSearchableError extends Error {
     this.sourceId = sourceId;
   }
 }
+
+export class SourceNotDetailedError extends Error {
+  readonly sourceId: string;
+
+  constructor(sourceId: string) {
+    super(`Sözlük kaynağı detay sorgusunu desteklemiyor: ${sourceId}`);
+    this.name = "SourceNotDetailedError";
+    this.sourceId = sourceId;
+  }
+}

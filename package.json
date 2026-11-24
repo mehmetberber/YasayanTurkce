@@ -11,6 +11,8 @@
     "tdk:probe": "pnpm --filter @yasayan-turkce/tdk-probe probe",
     "tdk:search": "pnpm --filter @yasayan-turkce/tdk-probe search-cli",
     "tdk:multi-search": "pnpm --filter @yasayan-turkce/tdk-probe multi-search",
+    "api:dev": "pnpm --filter @yasayan-turkce/api dev",
+    "api:start": "pnpm --filter @yasayan-turkce/api start",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck"
   }

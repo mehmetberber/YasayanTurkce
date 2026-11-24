@@ -47,8 +47,28 @@ pnpm test
 pnpm typecheck
 ```
 
+## API
+
+Geliştirme sunucusu:
+
+```bash
+pnpm api:dev
+```
+
+Varsayılan adres: `http://127.0.0.1:3000`
+
+Uç noktalar:
+
+- `GET /health`
+- `GET /v1/sources`
+- `GET /v1/search?q=acemi&source=tdk-gts&limit=5&offset=0`
+- `GET /v1/words/tdk-gts/27874?headword=kitap`
+
+Ayarlar için `apps/api/.env.example` dosyasına bakılabilir. `PORT`, `HOST`, `CORS_ORIGIN`, `TDK_TIMEOUT_MS` ve `SEARCH_TIMEOUT_MS` ortam değişkenleriyle ayarlanır.
+
 ## Paketler
 
+- `apps/api` — Fastify API sunucusu
 - `packages/domain` — kaynaktan bağımsız domain modeli ve arama arayüzleri
 - `packages/tdk` — TDK istemcisi, ham şemalar, GTS/ADS mapper'ları ve source sınıfları
 - `packages/search` — kaynak registry'si ve çok kaynaklı arama servisi
