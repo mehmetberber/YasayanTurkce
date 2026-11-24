@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@fastify/cors": "^11.4.3",
+    "@yasayan-turkce/cache": "workspace:*",
     "@yasayan-turkce/domain": "workspace:*",
     "@yasayan-turkce/search": "workspace:*",
     "@yasayan-turkce/tdk": "workspace:*",

@@ -64,14 +64,17 @@ Uç noktalar:
 - `GET /v1/search?q=acemi&source=tdk-gts&limit=5&offset=0`
 - `GET /v1/words/tdk-gts/27874?headword=kitap`
 
-Ayarlar için `apps/api/.env.example` dosyasına bakılabilir. `PORT`, `HOST`, `CORS_ORIGIN`, `TDK_TIMEOUT_MS` ve `SEARCH_TIMEOUT_MS` ortam değişkenleriyle ayarlanır.
+Ayarlar için `apps/api/.env.example` dosyasına bakılabilir. `PORT`, `HOST`, `CORS_ORIGIN`, `TDK_TIMEOUT_MS`, `SEARCH_TIMEOUT_MS`, `CACHE_MAX_ENTRIES`, `CACHE_SEARCH_TTL_MS` ve `CACHE_ENTRY_TTL_MS` ortam değişkenleriyle ayarlanır.
+
+Arama sonuçları varsayılan olarak 5 dakika, kelime detayları 1 saat in-memory cache’te tutulur. `CacheStore` arayüzü sayesinde ileride Redis/Postgres tabanlı cache’e geçilebilir.
 
 ## Paketler
 
 - `apps/api` — Fastify API sunucusu
+- `packages/cache` — `CacheStore` arayüzü ve in-memory TTL cache
 - `packages/domain` — kaynaktan bağımsız domain modeli ve arama arayüzleri
 - `packages/tdk` — TDK istemcisi, ham şemalar, GTS/ADS mapper'ları ve source sınıfları
-- `packages/search` — kaynak registry'si ve çok kaynaklı arama servisi
+- `packages/search` — kaynak registry'si, cache decorator'ı ve çok kaynaklı arama servisi
 - `tools/tdk-probe` — TDK API'sini incelemek için CLI araçları
 
 > Not: TDK verisi geliştirme/prototip aşamasında referans olarak kullanılmaktadır. Üretimde kullanım ve yeniden dağıtım için TDK'nın telif ve kullanım koşulları ayrıca değerlendirilmelidir.

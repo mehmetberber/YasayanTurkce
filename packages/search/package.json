@@ -17,6 +17,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@yasayan-turkce/cache": "workspace:*",
     "@yasayan-turkce/domain": "workspace:*"
   },
   "devDependencies": {

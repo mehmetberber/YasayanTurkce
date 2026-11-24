@@ -41,7 +41,13 @@ export async function buildApp(
   });
 
   const registry =
-    options.registry ?? createSourceRegistry(config.tdkTimeoutMs);
+    options.registry ??
+    createSourceRegistry({
+      tdkTimeoutMs: config.tdkTimeoutMs,
+      cacheMaxEntries: config.cacheMaxEntries,
+      searchTtlMs: config.cacheSearchTtlMs,
+      entryTtlMs: config.cacheEntryTtlMs,
+    });
   const searchService = options.searchService ?? new SearchService(registry);
 
   registerHealthRoutes(app);

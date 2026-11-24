@@ -171,6 +171,9 @@ importers:
       '@fastify/cors':
         specifier: ^11.4.3
         version: 11.4.3
+      '@yasayan-turkce/cache':
+        specifier: workspace:*
+        version: link:../../packages/cache
       '@yasayan-turkce/domain':
         specifier: workspace:*
         version: link:../../packages/domain
@@ -200,6 +203,15 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0(@types/node@26.6.6)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))
 
+  packages/cache:
+    devDependencies:
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+      vitest:
+        specifier: ^5.1.0
+        version: 5.1.0(@types/node@26.6.6)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))
+
   packages/domain:
     devDependencies:
       typescript:
@@ -211,6 +223,9 @@ importers:
 
   packages/search:
     dependencies:
+      '@yasayan-turkce/cache':
+        specifier: workspace:*
+        version: link:../cache
       '@yasayan-turkce/domain':
         specifier: workspace:*
         version: link:../domain

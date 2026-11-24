@@ -11,6 +11,19 @@ const envSchema = z.object({
     .min(100)
     .max(120_000)
     .default(45_000),
+  CACHE_MAX_ENTRIES: z.coerce.number().int().min(1).max(100_000).default(1000),
+  CACHE_SEARCH_TTL_MS: z.coerce
+    .number()
+    .int()
+    .min(1000)
+    .max(86_400_000)
+    .default(300_000),
+  CACHE_ENTRY_TTL_MS: z.coerce
+    .number()
+    .int()
+    .min(1000)
+    .max(86_400_000)
+    .default(3_600_000),
 });
 
 export interface AppConfig {
@@ -19,6 +32,9 @@ export interface AppConfig {
   readonly corsOrigin: string;
   readonly tdkTimeoutMs: number;
   readonly searchTimeoutMs: number;
+  readonly cacheMaxEntries: number;
+  readonly cacheSearchTtlMs: number;
+  readonly cacheEntryTtlMs: number;
 }
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
@@ -30,5 +46,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     corsOrigin: parsed.CORS_ORIGIN,
     tdkTimeoutMs: parsed.TDK_TIMEOUT_MS,
     searchTimeoutMs: parsed.SEARCH_TIMEOUT_MS,
+    cacheMaxEntries: parsed.CACHE_MAX_ENTRIES,
+    cacheSearchTtlMs: parsed.CACHE_SEARCH_TTL_MS,
+    cacheEntryTtlMs: parsed.CACHE_ENTRY_TTL_MS,
   };
 }
