@@ -1,14 +1,16 @@
 import {
+  TdkAdsListSchema,
   TdkEntryDetailMapSchema,
   TdkEntryListSchema,
   TdkSearchResponseSchema,
+  type TdkAdsEntry,
   type TdkEntry,
   type TdkSearchResponse,
 } from "./schema.js";
 
 const TDK_API_BASE = "https://api.sozluk.gov.tr";
 const TDK_WEB_ORIGIN = "https://sozluk.gov.tr";
-const REQUEST_TIMEOUT_MS = 30_000;
+const REQUEST_TIMEOUT_MS = 60_000;
 
 export const TDK_SEARCH_MODES = [
   "start",
@@ -43,6 +45,14 @@ export interface TdkEntriesResult {
   requestUrl: string;
   fetchedAt: string;
   entries: TdkEntry[];
+  raw: unknown;
+}
+
+export interface TdkAdsResult {
+  query: string;
+  requestUrl: string;
+  fetchedAt: string;
+  entries: TdkAdsEntry[];
   raw: unknown;
 }
 
@@ -82,6 +92,8 @@ export class TdkApiError extends Error {
 }
 
 export class TdkClient {
+  constructor(private readonly requestTimeoutMs = REQUEST_TIMEOUT_MS) {}
+
   async lookup(word: string): Promise<TdkLookupResult> {
     const query = word.trim().toLocaleLowerCase("tr-TR");
     if (!query) {
@@ -125,6 +137,28 @@ export class TdkClient {
       requestUrl: url.toString(),
       fetchedAt: new Date().toISOString(),
       entries: Object.values(entryMap),
+      raw,
+    };
+  }
+
+  async searchAds(query: string): Promise<TdkAdsResult> {
+    const normalizedQuery = query.trim();
+    if (!normalizedQuery) {
+      throw new Error("Aranacak kelime boş olamaz.");
+    }
+
+    const url = new URL("/ads", TDK_API_BASE);
+    url.searchParams.set("ara", normalizedQuery);
+    url.searchParams.set("searchType", "web");
+
+    const raw = await this.requestJson(url);
+    const entries = TdkAdsListSchema.parse(raw);
+
+    return {
+      query: normalizedQuery,
+      requestUrl: url.toString(),
+      fetchedAt: new Date().toISOString(),
+      entries,
       raw,
     };
   }
@@ -192,7 +226,7 @@ export class TdkClient {
     const response = await fetch(url, {
       ...init,
       headers,
-      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      signal: AbortSignal.timeout(this.requestTimeoutMs),
     });
 
     if (!response.ok) {

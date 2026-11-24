@@ -10,6 +10,7 @@
   "scripts": {
     "tdk:probe": "pnpm --filter @yasayan-turkce/tdk-probe probe",
     "tdk:search": "pnpm --filter @yasayan-turkce/tdk-probe search-cli",
+    "tdk:multi-search": "pnpm --filter @yasayan-turkce/tdk-probe multi-search",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck"
   }

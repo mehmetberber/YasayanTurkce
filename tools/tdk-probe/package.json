@@ -6,9 +6,12 @@
   "scripts": {
     "probe": "tsx src/index.ts",
     "search-cli": "tsx src/search.ts",
+    "multi-search": "tsx src/multi-search.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@yasayan-turkce/domain": "workspace:*",
+    "@yasayan-turkce/search": "workspace:*",
     "@yasayan-turkce/tdk": "workspace:*"
   },
   "devDependencies": {

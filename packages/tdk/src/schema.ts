@@ -83,6 +83,18 @@ export const TdkEntrySchema = z.object({
 export const TdkEntryListSchema = z.array(TdkEntrySchema);
 export const TdkEntryDetailMapSchema = z.record(z.string(), TdkEntrySchema);
 
+export const TdkAdsEntrySchema = z.object({
+  soz_id: z.number(),
+  sozum: z.string().nullish(),
+  atara: z.string().nullish(),
+  anlami: z.string().nullish(),
+  anahtar: z.string().nullish(),
+  turu2: z.string().nullish(),
+  gosterim_tarihi: z.string().nullish(),
+});
+
+export const TdkAdsListSchema = z.array(TdkAdsEntrySchema);
+
 export const TdkSearchResultItemSchema = z.object({
   madde_id: z.number(),
   madde: z.string(),
@@ -138,5 +150,6 @@ export type TdkSenseRelation = z.infer<typeof TdkSenseRelationSchema>;
 export type TdkSenseReference = z.infer<typeof TdkSenseReferenceSchema>;
 export type TdkReference = z.infer<typeof TdkReferenceSchema>;
 export type TdkEntry = z.infer<typeof TdkEntrySchema>;
+export type TdkAdsEntry = z.infer<typeof TdkAdsEntrySchema>;
 export type TdkSearchResultItem = z.infer<typeof TdkSearchResultItemSchema>;
 export type TdkSearchResponse = z.infer<typeof TdkSearchResponseSchema>;
